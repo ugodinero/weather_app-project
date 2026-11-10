@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmosphere - Modern Weather</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #dfe3e6;
+            color: #fff;
+        }
+
+        .app {
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #121212;
+            padding: 20px 20px 90px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top button {
+            background: #222;
+            color: #fff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .search {
+            display: flex;
+            gap: 8px;
+            margin: 18px 0;
+        }
+
+        .search input {
+            flex: 1;
+            padding: 13px;
+            border-radius: 14px;
+            border: none;
+            background: #222;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .search button {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            padding: 0 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .hero {
+            background: #000;
+            border-radius: 24px;
+            padding: 22px;
+            margin: 10px 0 18px;
+        }
+
+        .hero small {
+            color: #aaa;
+        }
+
+        .hero h1 {
+            margin: 4px 0;
+            font-size: 22px;
+        }
+
+        .hero .temp {
+            font-size: 72px;
+            margin: 8px 0;
+            font-weight: bold;
+        }
+
+        .hero .icon {
+            font-size: 64px;
+            float: right;
+        }
+
+        .stats {
+            display: flex;
+            background: #222;
+            border-radius: 18px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stats div {
+            flex: 1;
+        }
+
+        .stats small {
+            display: block;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 22px 0 10px;
+        }
+
+        .cities {
+            display: flex;
+            gap: 10px;
+        }
+
+        .city {
+            flex: 1;
+            background: #222;
+            border: none;
+            color: #fff;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .city b {
+            display: block;
+            font-size: 14px;
+        }
+
+        .city span {
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        .hourly {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+
+        .hour {
+            min-width: 76px;
+            background: #000;
+            border-radius: 16px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .hour p {
+            margin: 6px 0;
+        }
+
+        .day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 4px;
+            border-bottom: 1px solid #222;
+        }
+
+        .day span {
+            font-size: 14px;
+        }
+
+        .error {
+            color: #ff8080;
+            text-align: center;
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 860px;
+            max-width: calc(100% - 28px);
+            background: #222;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+        }
+
+        .nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 22px;
+        }
+
+        .nav a.active {
+            color: #fff;
+        }
+
+        @media (min-width: 500px) {
+            body {
+                padding: 20px 0;
+            }
+
+            .app {
+                border-radius: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="top">
+            <button>▦</button>
+            <button>🔔</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+            <span id="welcomeText"></span>
+            <button id="logoutBtn"
+                style="background: #222; color: #fff; border: none; border-radius: 12px; padding: 8px 14px; cursor: pointer;">Logout</button>
+        </div>
+
+        <form class="search" id="searchForm">
+            <input type="text" id="searchInput" placeholder="Search location...">
+            <button type="submit">Go</button>
+        </form>
+        <p class="error" id="errorText"></p>
+
+        <div class="hero">
+            <div class="icon" id="bigIcon">☀️</div>
+            <small id="dateText"></small>
+            <h1 id="cityName">Abuja</h1>
+            <small id="condition">Mostly Sunny</small>
+            <div class="temp"><span id="temp">--</span>°</div>
+            <small>Feels like <span id="feelsLike">--</span>°</small>
+        </div>
+
+        <div class="stats">
+            <div>💧<br><b id="rain">--</b><small>Precipitation</small></div>
+            <div>💦<br><b id="humidity">--</b><small>Humidity</small></div>
+            <div>💨<br><b id="wind">--</b><small>Wind Speed</small></div>
+        </div>
+
+        <h2>Other Cities</h2>
+        <div class="cities">
+            <button class="city" onclick="loadCity('Lagos')"><b>Lagos</b><span>Sunny</span></button>
+            <button class="city" onclick="loadCity('London')"><b>London</b><span>Cloudy</span></button>
+        </div>
+
+        <h2>Today</h2>
+        <div class="hourly" id="hourly"></div>
+
+        <h2>7 Days</h2>
+        <div id="daily"></div>
+
+        <div class="nav">
+            <a class="active" href="index.html">🏠</a>
+            <a href="search.html">🔍</a>
+            <a href="index.html">📋</a>
+            <a href="login.html">👤</a>
+        </div>
+    </div>
+
+    <script>
+        var cities = {
+            "Abuja": { lat: 9.0579, lon: 7.4951, country: "Nigeria" },
+            "Lagos": { lat: 6.5244, lon: 3.3792, country: "Nigeria" },
+            "London": { lat: 51.5074, lon: -0.1278, country: "United Kingdom" },
+            "New York": { lat: 40.7128, lon: -74.006, country: "USA" },
+            "Paris": { lat: 48.8566, lon: 2.3522, country: "France" },
+            "Tokyo": { lat: 35.6762, lon: 139.6503, country: "Japan" }
+        };
+        var weatherData = null;
+
+        function weatherText(code) {
+            if (code === 0) return "Clear Sky";
+            if (code === 1 || code === 2) return "Partly Cloudy";
+            if (code === 3) return "Cloudy";
+            if (code === 45 || code === 48) return "Foggy";
+            if (code >= 51 && code <= 55) return "Drizzle";
+            if (code >= 61 && code <= 65) return "Rain";
+            if (code >= 80 && code <= 82) return "Rain Showers";
+            if (code >= 95) return "Thunderstorm";
+            return "Cloudy";
+        }
+
+        function weatherIcon(code) {
+            if (code === 0) return "☀️";
+            if (code === 1 || code === 2) return "⛅";
+            if (code === 3) return "☁️";
+            if (code >= 51 && code <= 65) return "🌧️";
+            if (code >= 80 && code <= 82) return "🌦️";
+            if (code >= 95) return "⛈️";
+            return "☁️";
+        }
+
+        function showWeather() {
+            var d = weatherData;
+            if (!d) return;
+            var c = d.current;
+            document.getElementById("temp").textContent = Math.round(c.temperature_2m);
+            document.getElementById("condition").textContent = weatherText(c.weather_code);
+            document.getElementById("bigIcon").textContent = weatherIcon(c.weather_code);
+            document.getElementById("feelsLike").textContent = Math.round(c.apparent_temperature);
+            document.getElementById("humidity").textContent = c.relative_humidity_2m + "%";
+            document.getElementById("wind").textContent = c.wind_speed_10m + " km/h";
+            document.getElementById("rain").textContent = (d.daily.precipitation_probability_max ? d.daily.precipitation_probability_max[0] : 0) + "%";
+            document.getElementById("dateText").textContent = new Date().toDateString();
+
+            var html = "";
+            for (var i = 0; i < 6; i++) {
+                var time = d.hourly.time[i].slice(11, 16);
+                var label = i === 0 ? "NOW" : time;
+                html += '<div class="hour"><p>' + label + '</p><p>' + weatherIcon(d.hourly.weather_code[i]) + '</p><p>' + Math.round(d.hourly.temperature_2m[i]) + '°</p></div>';
+            }
+            document.getElementById("hourly").innerHTML = html;
+
+            var days = "";
+            var names = ["Today", "Tomorrow"];
+            for (var j = 0; j < 7; j++) {
+                var name = names[j] || new Date(d.daily.time[j]).toLocaleDateString("en", { weekday: "long" });
+                days += '<div class="day"><span>' + name + '</span><span>' + weatherIcon(d.daily.weather_code[j]) + ' ' + weatherText(d.daily.weather_code[j]) + '</span><span>+' + Math.round(d.daily.temperature_2m_max[j]) + '° / ' + Math.round(d.daily.temperature_2m_min[j]) + '°</span></div>';
+            }
+            document.getElementById("daily").innerHTML = days;
+        }
+
+        function loadWeather(lat, lon, name, country) {
+            document.getElementById("errorText").textContent = "";
+            document.getElementById("cityName").textContent = name;
+            var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=7";
+            fetch(url).then(function (res) { return res.json(); }).then(function (data) {
+                weatherData = data;
+                showWeather();
+            }).catch(function () {
+                document.getElementById("errorText").textContent = "Could not load weather. Check your internet.";
+            });
+        }
+
+        function loadCity(name) {
+            var c = cities[name];
+            loadWeather(c.lat, c.lon, name, c.country);
+        }
+
+        document.getElementById("searchForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            var name = document.getElementById("searchInput").value.trim();
+            if (!name) return;
+            fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + name + "&count=1&language=en&format=json")
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (!data.results || data.results.length === 0) {
+                        document.getElementById("errorText").textContent = "City not found. Try another city.";
+                        return;
+                    }
+                    var p = data.results[0];
+                    loadWeather(p.latitude, p.longitude, p.name, p.country || "");
+                });
+        });
+
+        var savedName = localStorage.getItem("name");
+        if (savedName) {
+            document.getElementById("welcomeText").textContent = "Welcome, " + savedName;
+        } else {
+            document.getElementById("logoutBtn").style.display = "none";
+        }
+        document.getElementById("logoutBtn").addEventListener("click", function () {
+            localStorage.removeItem("token");
+            localStorage.removeItem("name");
+            window.location.href = "login.html";
+        });
+
+        loadCity("Abuja");
+    </script>
+</body>
+
+</html>
